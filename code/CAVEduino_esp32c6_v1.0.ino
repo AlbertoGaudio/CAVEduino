@@ -22,27 +22,23 @@ RTC_DS3231 rtc;
 #define NUOVO_INTERRUPT 0
 #define BUTTON_PIN_BITMASK (1ULL << GPIO_NUM_0) // GPIO 0 bitmask for ext1
 
-//RTC_DATA_ATTR int bootCount = 0; ///NON LO METTO PERCHE' MI FREEZZA TUTTE LE VARIABILI
-
-// Define SD card connection CONTROLLARE BENE SE CORRISPONDE ALLA SCHEDA
+// Define SD card connection on SDI pins
 #define SD_MOSI     18
 #define SD_MISO     20
 #define SD_SCLK     19
 #define SD_CS       2
 
-//CAMBIARE QUI IL NOME DEL FILE A SECONDA DEL DATALOGGER
+//CHANGE HERE THE NAME OF THE FILE FOR EACH DATALOGGER
 #define nomefile "/data_logger_Nr1.csv"
-
-//QUESTO SERVE POI PER APRIRE E SCRIVERE IL FILE
 File myFile;
 
-//BME280 setto le variabili
+//BME280 SETTING VARIABLES
 Adafruit_BME280 bme; // use I2C interface
 Adafruit_Sensor *bme_temp = bme.getTemperatureSensor();
 Adafruit_Sensor *bme_pressure = bme.getPressureSensor();
 Adafruit_Sensor *bme_humidity = bme.getHumiditySensor();
 
-//TEMPO DEL BLINKING PER CAPIRE ERRORI
+//THIS DEFINES HOW LONG THE LED BLINK IS 
 static const uint16_t BLINK_PERIOD = 100;
 
 
@@ -50,16 +46,16 @@ void setup()
 {
   Serial.begin(115200);
 
-  //QUESTO SALVA UN BOTTO DI CORRENTE!!! RIDUCO LA FREQUENZA DELLA CPU AL MINIMO!!!
+  //LOWERING CPU FREQUENCY TO SAVE POWER - 10 IS THE MINIMUM
   setCpuFrequencyMhz(10);
 
-  //ATTIVO IL LED INTEGRATO PER SEGNALARE GLI ERRORI
+  //ACTIVATE THE FUNCTION OF THE BUILT-IN YELLOW LED
   pinMode(LED_BUILTIN, OUTPUT);
   
   Serial.println("Setup start");
   Serial.flush();
 
-  //INIZIALIZZO RTC
+  //INIZIALIZING RTC
   if (! rtc.begin())
   {
     Serial.println("Couldn't find RTC - cass!");
@@ -71,25 +67,26 @@ void setup()
     while (1) delay(10);
   }
 
-  //we don't need the 32K Pin, so disable it
+  //DISABLE THE 32K OSCILLATOR
   rtc.disable32K();
   
-  //PREPARO I PIN PER LA SVEGLIA
+  //SETTING UP PINS FOR THE WAKEUP FUNCTION
   pinMode(WAKEUP_GPIO, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(WAKEUP_GPIO), onAlarm, FALLING);
 
-  //trucco per fare l'allarme ogni 3 min ######## FOR TESTING PURPOSE ONLY
+  //SHOW INFO REGARDING THE PREVIOUS ALARM
   DateTime alarm1 = rtc.getAlarm1();
   Serial.print("Minutaggio allarme precedente: ");
   Serial.println(alarm1.minute());
   Serial.flush();
 
-  DateTime cazzo = rtc.now();
-  int nuovotempo = (cazzo.minute());//, DEC);
+  //#####################################ALARM EVERY 3 MINUTES, FOR TESTING ONLY - COMMENT THIS SECTION FOR OPERATIONS
+  DateTime currenttime = rtc.now();
+  int nuovotempo = (currenttime.minute());//, DEC);
   nuovotempo +=3;
   if (nuovotempo > 59) {nuovotempo -= 60;}
   
-  /////##################################ALLARME OGNI 30 MIN #### FOR OPERATIONS
+  /////##################################ALARM EVERY 30 MINUTES - UNCOMMENT THIS ONE FOR OPERATIONS
   //int nuovotempo = alarm1.minute();
   // int nuovotempo = alarm1.minute();
   // if (nuovotempo == 29) { nuovotempo = 59; }
@@ -107,15 +104,16 @@ void setup()
   rtc.writeSqwPinMode(DS3231_OFF);
 
 
-  //#########################################################################################3
-  //RTC DATE AND TIME. SOLO UNA VOLTA POI COMMENTARE. USARE L'ESEMPIO INSTEAD: PIU' VELOCE A SETTARE
+  //#########################################################################################
+  //UNCOMMENT THE FOLLOWING LINE FOR RTC SET DATE AND TIME. TO BE DONE ONLY ONCE.
   //rtc.adjust(DateTime(F(__DATE__),F(__TIME__))); //#######################################################
   // ###########################################################################################3
 
-  rtc.disableAlarm(1); //QUESTO SERVE PER ABBASSARE L'INTERRUTTORRRE CHE E' STATO APERTO PER IL WAKE-UP NEL CICLO PRECEDENTE
+  //REMOVE PREVIOUS ALARMS
+  rtc.disableAlarm(1);
   rtc.disableAlarm(2);
 
-  // Schedule an alarm
+  // SCHEDULE THE NEW ALARM
   if (!rtc.setAlarm1(DateTime(0,0,0,0,nuovotempo,0),DS3231_A1_Minute)) {  // this mode triggers the alarm when the minutes match
     Serial.println("Error, alarm wasn't set!");
     Serial.flush();
@@ -124,7 +122,7 @@ void setup()
     Serial.flush();
   }
 
-  //CONTROLLO SE BME280 FUNZIONA
+  //BME280 SENSOR INITIALIZING
   if (!bme.begin(0x77, &Wire))
   {
     Serial.println(F("Could not find a valid BME280 sensor, check wiring!"));
@@ -142,11 +140,10 @@ void setup()
     Serial.flush();
   }
 
-  //QUI FACCIO UN SINGOLO BLINK PER DIRE CHE TUTTO FUNZIONA
+  //BLINK ONE THE YELLOW LED TO SAY ALL IS GOOD!
   blink_pattern("01");
 
-  ///####EXPERIMENTAL!!!!#### TENTATIVO DI RIDURRE CONSUMO COME DA MANUALE. GUARDARE ESEMPIO AVANZATO DELLA LIBRERIA
-  ///######## TESTARE CON ALTRO SENSORE ED EVENTUALMENTE TOGLIERE SE TROPPO BALLERINO. 
+  ///#### SETTINGS SUGGESTED FOR WEATHER MONITORING BY BOSH BME280 OFFICIAL MANUAL - COMMENT THIS SECTION FOR SMOOTHER DATA
   Serial.println("-- Weather Station Scenario --");
   Serial.println("forced mode, 1x temperature / 1x humidity / 1x pressure oversampling,");
   Serial.println("filter off");
@@ -158,13 +155,14 @@ void setup()
                   Adafruit_BME280::FILTER_OFF );
                     
   
-  ///PROVO A SETTARE IL CS PIN DELLA SD CARD TO HIGH, QUESTO EVITA PROBLEMI A MONTARE LA SD CARD
+  ///START SETTING UP THE SD CARD USING SPI
   pinMode(SD_CS, OUTPUT);
   digitalWrite(SD_CS, HIGH);
   
-  //CONTROLLO CHE LA SD FUNZIA
+  //INITIALIZE SDI DEVICE 
   SPI.begin(SD_SCLK, SD_MISO, SD_MOSI, SD_CS);
 
+  //INITIALIZE AND MOUNT SD CARD
   if (!SD.begin(SD_CS)) 
   {
     Serial.println("SD Card MOUNT FAIL");
@@ -182,7 +180,7 @@ void setup()
     Serial.flush();
   }
    
-  //PREPARO LA HEADER DEL FILE, NON USO "WRITE" MA "APPEND" PER NON CANCELLARE NESSUN DATO PRESENTE
+  //WRITE THE LOGGING FILE HEADER IF FILE DOES NOT EXISTS
   if (SD.exists(nomefile)) 
     {
       Serial.println("....data file already exists logging resumed...");
@@ -200,20 +198,20 @@ void setup()
       Serial.flush();
     }  
 
-  //CONCLUDO IL SETUP DICENDOLO    
+  //INFO THAT THE SETUP IS COMPLETE   
   Serial.println("INFO: Setup complete. Everything seems to work !!!");
   Serial.println("");
   Serial.flush();
 
-  delay(5000); //AGGIUNGO QUI UN DELAY PER FAR SCALDARE IL SENSORE
+  delay(5000); //DELAY ADDED TO WARM UP BME280 SENSOR
 
-  //ASSEGNO LE VARIABILI DEI SENSORI LEGGO I SENSORI
+  //SETUP BME280 SENSOR VARIABLES
   sensors_event_t temp_event, pressure_event, humidity_event;
   bme_temp->getEvent(&temp_event);
   bme_pressure->getEvent(&pressure_event);
   bme_humidity->getEvent(&humidity_event);
   
-  //Adesso mi occupo del timestamp
+  //SHOWING THE TIMESTAMP ON TERMINAL
   DateTime now = rtc.now();
 
   Serial.print(now.year(), DEC);
@@ -230,7 +228,7 @@ void setup()
   Serial.println(now.second(), DEC);
   Serial.flush();
 
-  //APRO IL FILE E SCRIVO LA STRINGA  
+  //WRITING ALL THE DATA IN THE LOGGING FILE
   myFile = SD.open(nomefile, FILE_APPEND); //FILE_WRITE SOVRASCRIVE, FILE_APPEND FUNZIONA CON ESP32
   if (myFile) 
   {
@@ -266,11 +264,10 @@ void setup()
     Serial.flush();
   }
 
-  //delay(5000);
   Serial.println("Going to sleep now");
   Serial.flush();
   
-  // TENTO DI SALVARE ENERGIA
+  // CLOSING SERVICES TO SAVE POWER DURING SLEEP
   btStop();
   SD.end();
   SPI.end();
@@ -281,12 +278,12 @@ void setup()
   digitalWrite(SD_SCLK, LOW);
   Wire.end();
 
-  //QUESTA E' LA FUNZIONE PER PREPARARE LA ESP32S3 ALLO SLEEP
+  //SLEEP MODE SETUP SPECIFIC FOR ESP32C6 - CHAGE THIS WITH OTHER ESP32 BOARDS
   esp_sleep_enable_ext1_wakeup(BUTTON_PIN_BITMASK, ESP_EXT1_WAKEUP_ANY_LOW);
 
-  ///PROVO A SETTARE IL CS PIN DELLA SD CARD TO HIGH PER EVITARE PROBLEMI A MONTARE LA SD CARD
+  ///SETTING SD CARD PINS FOR THE SLEEP
   pinMode(SD_CS, OUTPUT);
-  digitalWrite(SD_CS, LOW); //EXPERIMENTAL ERA SU HIGH E FUNZIONAVA (NON SEMPRE)
+  digitalWrite(SD_CS, LOW);
 
   Serial.flush();
   Serial.end();
@@ -300,8 +297,9 @@ void loop() {
   // NOT NEED TO USE THIS LOOP BECAUSE OF THE SLEEP MODE
 }
 
-void onAlarm() {} //QUESTO E' SOLO PER FORNIRE UN FALSO ISR ALL'INTERRUPT
+void onAlarm() {} //FAKE FUNTION FOR THE INTERRUPT PIN SETUP 
 
+//YELLOW LED BLINKING FUNCTION
 void blink_pattern(char pattern[])
 {
   for (size_t index = 0; index < strlen(pattern); index ++)
