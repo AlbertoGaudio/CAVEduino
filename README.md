@@ -15,7 +15,7 @@ CAVEduino has been designed by cavers for cavers, therefore one of the main focu
 4. MicroSD card breakout board (3 volt) (SDI)
 5. 1 x 18650 lithium rechargeable battery (3000 - 4000mA)
 6. CR1220 12mm Diameter - 3V Lithium Coin Cell Battery (CR1220)
-7. A 1GB MicroSD card
+7. A Class 10 (or better) MicroSD card
 7. An electrical switch (you can also find battery holders with an integrated switch)
 8. Solder Breadboard and dupont connectors, wires etc.. of every sort
 9. A 6'' x 6'' plastic box waterproof (a waterproof small storage parts organizer box will do the job)
