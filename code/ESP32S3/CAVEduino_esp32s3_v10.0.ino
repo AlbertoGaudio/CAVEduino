@@ -92,16 +92,16 @@ void setup()
   Serial.println(alarm1.minute());
   Serial.flush();
 
-  //#####################################ALARM EVERY 3 MINUTES, FOR TESTING ONLY - COMMENT THIS SECTION FOR OPERATIONS
-  DateTime currenttime = rtc.now();
-  int nuovotempo = (currenttime.minute());//, DEC);
-  nuovotempo +=1;
-  if (nuovotempo > 59) {nuovotempo -= 60;}
+  //#####################################ALARM EVERY 1 MINUTES, FOR TESTING ONLY - COMMENT THIS SECTION FOR OPERATIONS
+  //DateTime currenttime = rtc.now();
+  //int nuovotempo = (currenttime.minute());//, DEC);
+  //nuovotempo +=1;
+  //if (nuovotempo > 59) {nuovotempo -= 60;}
   
   /////##################################ALARM EVERY 30 MINUTES - UNCOMMENT THIS ONE FOR OPERATIONS
-  // int nuovotempo = alarm1.minute();
-  // if (nuovotempo == 29) { nuovotempo = 59; }
-  // else{ nuovotempo = 29; }
+  int nuovotempo = alarm1.minute();
+  if (nuovotempo == 29) { nuovotempo = 59; }
+  else{ nuovotempo = 29; }
 
   Serial.print("Nuovo allarme:");
   Serial.println(nuovotempo);
