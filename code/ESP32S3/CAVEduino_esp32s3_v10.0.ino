@@ -1,6 +1,7 @@
 /*
 #######################################################
 CAVEduino datalogger
+License: GPL-3.0
 GREATER HOUSTON GROTTO - ALBERTO GAUDIO 2026
 FOR TEMP, HUM, PRESSURE LOGGING. BASED ON ADAFRUIT ESP32S3
 #######################################################
