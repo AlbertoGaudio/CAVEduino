@@ -1,10 +1,10 @@
 # CAVEduino
 A datalogger for cave environmental monitoring.
-A free and open source project developped by Alberto Gaudio of the Greater Houston Grotto. 
+A free and open source project developped by Alberto Gaudio and the Greater Houston Grotto. 
 ## Introduction
-CAVEduino is an open source project to build and operate a datalogger to monitor cave environment. The project is based on ESP32 controller and it is studied to be easly transported and deployed in a cave. The hardware selection was studied to fit the purpose containing the costs, make it simple to replace batteries and retreive data and simple use and handling in cave. The logger can record a data every 30 min for approximately 6 months. This guide is to build a basic datalogger for Temperature, Pressure and Relative Humidity, however the possibilities to add any sort of sensor are limitless.
+CAVEduino is an open source project to build and operate a data-logger to monitor cave environment. The project is based on ESP32 controller and it is studied to be easily transported and deployed in a cave. The hardware selection was studied to fit the purpose containing the costs, make it simple to replace batteries and retrieve data and simple use and handling in cave. The logger can record a data every 30 min for approximately 6 months. This guide is to build a basic data-logger for Temperature, Pressure and Relative Humidity, however the possibilities to add any sort of sensor are limitless.
 
-CAVEduino has been designed by cavers for cavers, therefore one of the main focus was on streamlining the battery swap and data retreival: you don't need to bring a laptop in cave to download the data, batteries are easy to transport and LED flashing codes provide information on normal operations.
+CAVEduino has been designed by cavers for cavers, therefore one of the main focus was on streamlining the battery swap and data retrieval: you don't need to bring a laptop in cave to download the data, batteries are easy to transport and LED flashing codes provide information on normal operations.
 
 **Carefully read all the instruction below. You will build and operate the CAVEduino at your own risk.**
 
@@ -13,7 +13,7 @@ CAVEduino has been designed by cavers for cavers, therefore one of the main focu
 2. BME280 sensor breakboard (Temperature, Pressure, Humidity) (I2C)
 3. DS3231 RTC (Real TIme Clock) (I2C)
 4. MicroSD card breakout board (3 volt) (SDI)
-5. 1 x 18650 lithium rechargeable battery (3000 - 4000mA)
+5. 3 x Alcaline AA batteries (good quality)
 6. CR1220 12mm Diameter - 3V Lithium Coin Cell Battery (CR1220)
 7. A Class 10 (or better) MicroSD card
 7. An electrical switch (you can also find battery holders with an integrated switch)
@@ -21,7 +21,9 @@ CAVEduino has been designed by cavers for cavers, therefore one of the main focu
 9. A 6'' x 6'' plastic box waterproof (a waterproof small storage parts organizer box will do the job)
 10. A PVC tee 1/2'' pipe for plumbing with the the single lateral end threaded
 11. A PVC male adapter for electrical conduits
-12. 4 x cable zip tie mounting base 
+12. 4 x cable zip tie mounting base
+13. Sealing Clay or Silicone
+14. Silica Gel Desiccant bags
 
 ## Wiring
 This guide is written for the **XIAO ESP32C6** only. Check the [manufacturer page for the Pinout diagram](https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/#hardware-overview) of this and other boards.
@@ -59,7 +61,7 @@ Install the [Arduino IDE](https://www.arduino.cc/en/software/?ps_full_site=1)  o
 
 If you are using Linux you will have to add a file to be able to upload the code to the microcontroller:
 
-	" INSERT THE USB RULE CODE IN HERE"
+	https://support.arduino.cc/hc/en-us/articles/9005041052444-Fix-udev-rules-on-Linux
 
 #### Arduino IDE Libraries
 In the Arduino IDE install the following libraries:
@@ -75,7 +77,7 @@ Use the code in the "Example Folder" of the Arduino IDE. You will find example c
 ####First Troubleshoot
 If you have issues while running the code, check every component individually using the example that can be found in the Arduino IDE software. So you can fix one component at the time if you have trouble.
 
-**MicroSD Card issues**: The MicroSD card must be formatted using FAT16 or FAT32 file system. Ususally it is already formatted when new. The MicroSD card should not be oversized, in general smaller MicroSD are faster and more reliable than the large ones. In my project I am using a 1GB MicroSD card, because it i hard to find smaller MicroSD on the market today.
+**MicroSD Card issues**: The MicroSD card must be formatted using FAT32 file system. Use a good quality SD card, even if the capacity is oversized (example: SanDisk® High Endurance microSD™ Card 32GB). This avoid a lot of problem of mounting and writing data in a long timeline.
 
 ## Little hacks to save power
 The sensors often have an integrated LED mounted that are constantly on when the system is powered. This is cause of significant battery drain on the long time. Therefore, after having tested that everything works well, you have to get rid of those LEDs.
@@ -98,16 +100,14 @@ You can use a multimeter capable of measuring uA, connectimg it between the + of
 You should read approximately 10-15ma during operations and approximately 1-1.5mA during the deep sleep mode. If in deep sleep mode you have higher current, check if your wiring is well done. Sometimes cables too long can leak some current.
 
 ## Flashing the microcontroller with the CAVEduino software
-If it is the first time the DS3231 (RTC Clock) is in use, the clock must be set. To do this use the DS3231 example in the Arduino IDE (preferred way) or temporary uncomment the line:
-
-	Line XX - settare l'orologio
+If it is the first time the DS3231 (RTC Clock) is in use, the clock must be set. To do this use the DS3231 example in the Arduino IDE (preferred way).
 
 The coin battery on the back of the RTC board will keep the time for years (with some minor drift).
 **Then you have to flash the microcontroller again, commenting the line for the clock settings**
 
-Optionally you can modify the name of the logging file for each device, so that it is going to be easier distinguishing the MicroSD cards when retrieving the data from multiple loggers:
+You can modify the name of the logging file for each device, so that it is going to be easier distinguishing the MicroSD cards when retrieving the data from multiple loggers:
 
-	Line XX - Cambiare il nome del file
+	#define nomefile "/Logger01.csv"
 
 Finally flash the microcontroller using the file "Name of the File" in the repository.
 
@@ -122,6 +122,8 @@ Finally flash the microcontroller using the file "Name of the File" in the repos
 - Carefully and gently pull the cables from the bottom and place the BME280 sensor in position (in the middle of the tee).
 - Stick 4 x zip tie mounters to the upper left corner of the box. You have to place them so that the zip ties will hold the solder breadbord safely.
 - Glue the battery holder to the bottom right corner of the box
+
+**Note:** It is a good idea to insulate the external from the internal using Sealing Clay or Silicone. Also use the Silica Gel Bags into the box to keep the electronics dry.
  
 ## Operations
 Once everything is proper installed in the case and the system is disconnected from the PC, you can operate your new CAVEduino!
@@ -149,7 +151,7 @@ The yellow led will repeat the following error codes for 3 times with 3 seconds 
 #### Retrieving data and replacing batteries
 The CAVEduino should log data for approximately 6 months  with a set of batteries. Then you have to plan cave trips within this time frame to retrieve the data and swap the batteries. It is suggested to do this operation every 4 months to avoid data gaps  because of a dead battery.
 
-- Before leaving for the trip properly format the MicroSD cards (FAT16 or FAT32 filesystem)
+- Before leaving for the trip properly format the MicroSD cards (FAT32 filesystem)
 - Be sure that the new batteries are fully charged 
 - Make sure both the batteries and the flash cards are well contained and stay dry during caving
 - Go caving with your mates and bring with you enough fresh batteries and MicroSD cards for the loggers you have in that cave.
