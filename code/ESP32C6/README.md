@@ -7,7 +7,7 @@ This guide is focused on the Xiao ESP32C6 board. You will have to check out all 
 ## Equipment
 1. XIAO ESP32C6 board
 2. BME280 sensor breakboard (Temperature, Pressure, Humidity) (I2C)
-3. DS3231 RTC (Real TIme Clock) (I2C)
+3. Adafruit DS3231 RTC (Real TIme Clock) (I2C)
 4. MicroSD card breakout board (3 volt) (SDI)
 5. 3 x Alcaline AA batteries (good quality)
 6. CR1220 12mm Diameter - 3V Lithium Coin Cell Battery (CR1220)
@@ -34,6 +34,8 @@ The first stage suggested is using a solderless breadboard to familiarize and ch
     RTC Ground ----> GND
     RTC SQW ----> D0
     Batteria a moneta sul retro della scheda RTC
+
+**Note**: For the RTC board use a 10k Ohm pullup resistor for the SQW/INT (to the 3.3V)!
 
 **BME280 - I2C:**
 
