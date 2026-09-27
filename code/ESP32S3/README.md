@@ -4,7 +4,7 @@ This guide is focused on the Adafruit QT Py ESP32S3 board. You will have to chec
 **NOTE** There is a **testing mode** (record data every 1 minute) and a **production mode** (record data every 30 minutes), to change between them you will have to comment and uncomment the lines as per the instruction within the code.
 
 ## Equipment
-1. dafruit QT Py ESP32S3
+1. Adafruit QT Py ESP32S3
 2. BME280 sensor breakboard (with QT connectors) (Temperature, Pressure, Humidity) (I2C)
 3. DS3231 RTC (with QT connectors) (Real TIme Clock) (I2C)
 4. Adafruit microSD Card BFF (SDI) (can be mounted back to back with the main board)
@@ -26,7 +26,10 @@ This guide is written for the **Adafruit QT Py ESP32S3** only. Check the [manufa
 The first stage suggested is using a solderless breadboard to familiarize and check the wiring. Then you can solder everything use a solder breadboard after testing goes well.
 
 **Real Time Clock (RTC) - I2C:**
-USE THE STEMMA QT CABLE from the noard to the RTC
+- USE THE STEMMA QT CABLE from the noard to the RTC
+- Connect the SQW/INT pin to the A0 pin of the board. **Note!** you need to set the A0 pin as an Input Pullup, and there are 2 ways to do so.
+  1) Via software by setting A0 as INPUT PULLUP (already active in the code)
+  2) You can do this adding a 10k ohm resistor from the 3V pin to the A0 pin on the board. This solution should provide more stability, but you have to disable the code for the internal pullup: rtc_gpio_pullup_en(WAKEUP_GPIO); rtc_gpio_pulldown_dis(WAKEUP_GPIO);
 
 **BME280 - I2C:**
 
