@@ -7,8 +7,8 @@ CAVEduino is an open source project to build and operate a data-logger to monito
 CAVEduino has been designed by cavers for cavers, therefore one of the main focus was on streamlining the battery swap and data retrieval: you don't need to bring a laptop in cave to download the data, batteries are easy to transport and LED flashing codes provide information on normal operations.
 
 **Carefully read all the instruction. You will build and operate the CAVEduino at your own risk.**
-![CAVEDuino](https://github.com/AlbertoGaudio/CAVEduino/blob/main/code/outside.jpg =100x200)
 
+<img src="https://github.com/AlbertoGaudio/CAVEduino/blob/main/code/outside.jpg" alt="CAVEduino" width="250"/>
 
 
 ## Equipment
