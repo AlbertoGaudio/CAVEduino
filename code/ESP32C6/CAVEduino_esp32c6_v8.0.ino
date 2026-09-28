@@ -63,7 +63,7 @@ void setup()
   //INIZIALIZING RTC
   if (! rtc.begin())
   {
-    Serial.println("Couldn't find RTC - cass!");
+    Serial.println("Couldn't find RTC !");
     Serial.flush();
     for (int i = 0; i < 3; i++) {
       blink_pattern("010101");
@@ -82,7 +82,7 @@ void setup()
 
   //SHOW INFO REGARDING THE PREVIOUS ALARM
   DateTime alarm1 = rtc.getAlarm1();
-  Serial.print("Minutaggio allarme precedente: ");
+  Serial.print("Previous alarm minutes: ");
   Serial.println(alarm1.minute());
   Serial.flush();
 
@@ -180,9 +180,9 @@ void setup()
     }
 
     Serial.flush();
-    Serial.println(F("PROVO A RESETTARE"));
+    Serial.println(F("Trying to Restart"));
 
-    ESP.restart(); ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////NUOVO TENTATIVO DI USCIRE DAL TUNNEL
+    ESP.restart(); 
     //while (1) delay(10);
   } 
   else 
@@ -204,7 +204,7 @@ void setup()
     } 
     else 
     {
-      myFile = SD.open(nomefile, FILE_APPEND); //FILE_WRITE SOVRASCRIVE, FILE_APPEND FUNZIONA CON ESP32
+      myFile = SD.open(nomefile, FILE_APPEND); //FILE_WRITE overwrites, FILE_APPEND works with ESP32
       myFile.println("Timestamp, temp(*C),humidity(%),pressure(hPa)");
       myFile.close();
       Serial.println("New logging file created");
@@ -228,7 +228,7 @@ void setup()
   
 
   //WRITING ALL THE DATA IN THE LOGGING FILE
-  myFile = SD.open(nomefile, FILE_APPEND); //FILE_WRITE SOVRASCRIVE, FILE_APPEND FUNZIONA CON ESP32
+  myFile = SD.open(nomefile, FILE_APPEND); //FILE_WRITE overwrites, FILE_APPEND works with ESP32
   if (myFile) 
   {
     Serial.print("Writing data to SD card...");
