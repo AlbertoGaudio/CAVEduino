@@ -17,8 +17,6 @@ FOR TEMP, HUM, PRESSURE LOGGING. BASED ON ADAFRUIT ESP32S3
 #include "driver/periph_ctrl.h"
 #include "driver/rtc_io.h"
 #include "WiFi.h"
-// INTERNAL PULLUP RATHER THAN EXTERNAL 10K OHM RESISTOR FROM 3V TO THE WAKEUP PIN - DO NOT USE IF YOU HAVE A PHYSICAL 10K RESISTOR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-#include "driver/rtc_io.h"
 
 RTC_DS3231 rtc;
 
@@ -70,7 +68,7 @@ void setup()
   //INIZIALIZING RTC
   if (! rtc.begin(&Wire1))
   {
-    Serial.println("Couldn't find RTC - cass!");
+    Serial.println("Couldn't find RTC !");
     Serial.flush();
     for (int i = 0; i < 3; i++) {
       blink_pattern("010101");
@@ -89,7 +87,7 @@ void setup()
 
   //SHOW INFO REGARDING THE PREVIOUS ALARM
   DateTime alarm1 = rtc.getAlarm1();
-  Serial.print("Minutaggio allarme precedente: ");
+  Serial.print("Previous alarm minutes: ");
   Serial.println(alarm1.minute());
   Serial.flush();
 
@@ -104,7 +102,7 @@ void setup()
   if (nuovotempo == 29) { nuovotempo = 59; }
   else{ nuovotempo = 29; }
 
-  Serial.print("Nuovo allarme:");
+  Serial.print("New alarm:");
   Serial.println(nuovotempo);
   Serial.flush();
 
@@ -197,7 +195,7 @@ void setup()
     } 
     else 
     {
-      myFile = SD.open(nomefile, FILE_APPEND); //FILE_WRITE SOVRASCRIVE, FILE_APPEND FUNZIONA CON ESP32
+      myFile = SD.open(nomefile, FILE_APPEND); //FILE_WRITE OVERWRITES, FILE_APPEND WORKS WITH ESP32
       myFile.println("Timestamp, temp(*C),humidity(%),pressure(hPa)");
       myFile.close();
       Serial.println("New logging file created");
@@ -220,7 +218,7 @@ void setup()
   bme_humidity->getEvent(&humidity_event);
   
   //WRITING ALL THE DATA IN THE LOGGING FILE
-  myFile = SD.open(nomefile, FILE_APPEND); //FILE_WRITE SOVRASCRIVE, FILE_APPEND FUNZIONA CON ESP32
+  myFile = SD.open(nomefile, FILE_APPEND); //FILE_WRITE OVERWRITES, FILE_APPEND WORKS WITH ESP32
   if (myFile) 
   {
     Serial.print("Writing data to SD card...");
