@@ -6,9 +6,13 @@ CAVEduino is an open source project to build and operate a data-logger to monito
 
 CAVEduino has been designed by cavers for cavers, therefore one of the main focus was on streamlining the battery swap and data retrieval: you don't need to bring a laptop in cave to download the data, batteries are easy to transport and LED flashing codes provide information on normal operations.
 
+Browse the repository to find your preferred model:
+ - CAVEduino v1.0: ESP32-C6
+ - CAVEduino v2.0: ESP32-S3
+
 **Carefully read all the instruction. You will build and operate the CAVEduino at your own risk.**
 
-<img src="https://github.com/AlbertoGaudio/CAVEduino/blob/main/code/outside.jpg" alt="CAVEduino" width="250"/>
+<img src="https://github.com/AlbertoGaudio/CAVEduino/blob/main/code/outside.jpg" alt="CAVEduino" height="250"/> <img src="https://github.com/AlbertoGaudio/CAVEduino/blob/main/code/CaveDuinoV2-closed_rid.jpeg" alt="CAVEduino" width="250"/>
 
 
 
