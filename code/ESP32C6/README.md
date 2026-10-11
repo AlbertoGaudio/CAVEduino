@@ -1,3 +1,4 @@
+# CAVEduino v1.0
 # INSTRUCTION FOR ESP32C6 BOARDS
 This guide is focused on the Xiao ESP32C6 board. You will have to check out all the pins. The main difference with other boards is the "Sleep" function.
 **NOTE** There is a **testing mode** (record data every 1 minute) and a **production mode** (record data every 30 minutes), to change between them you will have to comment and uncomment the lines as per the instruction within the code.
